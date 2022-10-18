@@ -22,7 +22,7 @@ class ProxyPool(object):
                  redis_port: int = REDIS_PORT,
                  redis_password: str = REDIS_PASSWORD,
                  redis_db: int = REDIS_DB,
-                 pool_name: str = "PROXY_POOL"):
+                 pool_name: str = POOL_NAME):
 
         """
         初始化
@@ -62,10 +62,10 @@ class ProxyPool(object):
 
         proxy_list = []
 
-        if size == 0:
-            return proxy_list
-        elif size >= 1:
+        if size >= 1:
             size -= 1
+        else:
+            return proxy_list
 
         servers = self._redis.zrange(self.pool_name, 0, size)
         for server in servers:
