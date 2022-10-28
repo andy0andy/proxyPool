@@ -40,10 +40,11 @@ class ProxyPool(object):
     def add(self, servers: List[str]):
 
         """
-        添加代理
+        添加多个代理
         :param servers: ["[ip]:[port]", ]
         :return:
         """
+
         if not servers:
             logger.warning(f"Missing argument.")
         else:
@@ -128,11 +129,42 @@ class ProxyPool(object):
         else:
             logger.warning(f"argument error.")
 
+    def isExist(self, server):
+        """
+        判断有序集合是否含有此键
+        :param server:
+        :return:
+        """
+
+        ok = self._redis.zscore(self.pool_name, server)
+        if ok is None:
+            return False
+
+        return True
+
+
+    def gt_score_threshold(self, threshold: Optional[int] = dial_threshold):
+        """
+        大于拨号阈值的代理
+        :param threshold:
+        :return:
+        """
+
+        servers = self._redis.zrangebyscore(self.pool_name, threshold, 999999)
+        servers = [server.decode() for server in servers]
+
+        return servers
+
+
+
 
 if __name__ == "__main__":
     proxy_pool = ProxyPool()
 
-    # print(proxy_pool.query(1))
-    print(proxy_pool.random())
+    # proxy_pool.delete("114.104.134.198:8889")
 
+    # proxy_pool.gt_score_threshold()
+
+    print(proxy_pool.count())
+    print(proxy_pool.gt_score_threshold())
     ...

@@ -20,6 +20,30 @@ POOL_NAME = "PROXY_POOL"
 WEB_USERNAME = "andy"
 WEB_PASSWORD = "123456"
 
+# 拨号命令
+dial_start = "adsl-start"
+dial_stop = "adsl-stop"
+
+# 拨号间隔 s; 拨号一次大概10-12s之间
+dial_interval = 60
+
+# 拨号次数阈值
+dial_threshold = 100
+
+# vps池, 以ssh方式连接拨号
+vps_pool = [
+    {
+        "host": "114.104.147.42",
+        "port": 20041,
+        "user": "root",
+        "password": "d19891c67070",
+        "server_name": "hshan01",
+        "out_port": "8889"
+    },
+]
+
+
+
 
 
 
