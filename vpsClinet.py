@@ -106,7 +106,7 @@ class VpsClient(object):
         if ip:
             server = f"{ip}:{self.vps_out_port}"
             self.current_server = server
-            logger.info(f"[vps]: {self.vps_name} current [ip:port] -> {server}")
+            # logger.info(f"[vps]: {self.vps_name} current [ip:port] -> {server}")
             return server
 
 

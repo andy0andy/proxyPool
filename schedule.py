@@ -31,7 +31,25 @@ class Schedule(object):
         self._vps_list = []
         for vps_data in vps_pool:
             vps_cli = VpsClient(**vps_data)
+            self.restart_tinyproxy(vps_cli)    # 重启tinyproxy
             self._vps_list.append(vps_cli)
+
+
+    def restart_tinyproxy(self, vps: VpsClient):
+        """
+        重启 tinyproxy
+        :param vps:
+        :return:
+        """
+
+        vps.open_ssh()
+
+        cmd = "systemctl restart tinyproxy"
+        vps._exec_cmd(cmd)
+
+        vps.close_ssh()
+
+
 
     def dial(self, vps: VpsClient) -> str:
         """
@@ -43,15 +61,15 @@ class Schedule(object):
         vps.open_ssh()
 
         old_server = vps.current_server
+        # 清除旧代理
+        if self._proxy_pool.isExist(old_server):
+            self._proxy_pool.delete(old_server)
+
         vps.adsl_stop()
         vps.adsl_start()
         server = vps.get_ip()
 
         vps.close_ssh()
-
-        # 清除旧代理
-        if self._proxy_pool.isExist(old_server):
-            self._proxy_pool.delete(old_server)
 
         self._proxy_pool.add([server])
         logger.success(f"[vps]: [{vps.vps_name}] replace proxy {server}")
@@ -69,14 +87,27 @@ class Schedule(object):
 
         while True:
 
+            mid_len = len(self._vps_list) // 2
+
             # 协程拨号
             jobs = []
-            for vps in self._vps_list:
+            for vps in self._vps_list[:mid_len]:
                 job = gevent.spawn(self.dial, vps)
 
                 jobs.append(job)
 
             gevent.joinall(jobs)
+
+            # print("----")
+
+            jobs = []
+            for vps in self._vps_list[mid_len:]:
+                job = gevent.spawn(self.dial, vps)
+
+                jobs.append(job)
+
+            gevent.joinall(jobs)
+
 
             time.sleep(dial_interval)
 
