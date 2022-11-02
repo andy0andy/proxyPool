@@ -6,3 +6,6 @@ uvicorn
 loguru
 gevent
 python-multipart
+retrying
+faker
+requests
