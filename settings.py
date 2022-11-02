@@ -2,7 +2,7 @@ import os
 from loguru import logger
 
 # 版本
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 # 项目根目录
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -116,7 +116,8 @@ vps_pool = [
 ]
 
 
-
+# log
+# logger.add("logs/{time}.log", rotation="200 MB", retention="7 days", enqueue=True)
 
 
 

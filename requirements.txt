@@ -1,0 +1,8 @@
+click
+redis
+paramiko
+fastapi
+uvicorn
+loguru
+gevent
+python-multipart

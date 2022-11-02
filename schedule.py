@@ -1,10 +1,10 @@
-from gevent import monkey;
-
-monkey.patch_all()
+from gevent import monkey;monkey.patch_all()
 import gevent
 import time
-from multiprocessing import Process
-from queue import Queue
+from faker import Faker
+import random
+import requests
+from retrying import retry
 
 from settings import *
 from vpsClinet import VpsClient
@@ -17,6 +17,21 @@ from proxyPool import ProxyPool
 代理使用策略：
     阈值：超过阈值拨号
 """
+
+fake = Faker()
+
+# 查询ip服务
+query_ip_urls = [
+    "http://ifconfig.me",
+    "https://www.cip.cc",
+    "http://icanhazip.com/",
+    "https://ident.me/",
+    "https://ipecho.net/plain",
+    "http://whatismyip.akamai.com/",
+    "https://tnx.nl/ip",
+    "https://myip.dnsomatic.com/",
+    "https://ip.sb/"
+]
 
 
 class Schedule(object):
@@ -31,7 +46,7 @@ class Schedule(object):
         self._vps_list = []
         for vps_data in vps_pool:
             vps_cli = VpsClient(**vps_data)
-            self.restart_tinyproxy(vps_cli)    # 重启tinyproxy
+            # self.restart_tinyproxy(vps_cli)    # 重启tinyproxy
             self._vps_list.append(vps_cli)
 
 
@@ -42,37 +57,75 @@ class Schedule(object):
         :return:
         """
 
-        vps.open_ssh()
+        with gevent.Timeout(10, False) as timeout:
 
-        cmd = "systemctl restart tinyproxy"
-        vps._exec_cmd(cmd)
+            vps.open_ssh()
 
-        vps.close_ssh()
+            cmd = "systemctl restart tinyproxy"
+            vps._exec_cmd(cmd)
+
+            vps.close_ssh()
 
 
+    def check_ip(self, server):
+        """
+        检测代理是否可用；
+        :param server:
+        :return:
+        """
 
+
+        headers = {
+            "user_agent": fake.user_agent()
+        }
+
+        proxies = {
+            "http": f"http://{server}",
+            "https": f"http://{server}",
+        }
+
+        resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies)
+        if resp.status_code == 200:
+            return True
+
+        return False
+
+
+    @retry(stop_max_attempt_number=3)
     def dial(self, vps: VpsClient) -> str:
         """
         单次拨号, 并保存
         :param vps:
         :return:
         """
+        server = ""
 
-        vps.open_ssh()
+        # 超时断开,防止阻塞
+        with gevent.Timeout(20) as timeout:
+            vps.open_ssh()
 
-        old_server = vps.current_server
-        # 清除旧代理
-        if self._proxy_pool.isExist(old_server):
-            self._proxy_pool.delete(old_server)
+            old_server = vps.current_server
+            # 清除旧代理
+            if self._proxy_pool.isExist(old_server):
+                self._proxy_pool.delete(old_server)
 
-        vps.adsl_stop()
-        vps.adsl_start()
-        server = vps.get_ip()
+            vps.adsl_stop()
+            vps.adsl_start()
+            server = vps.get_ip()
 
-        vps.close_ssh()
+            vps.close_ssh()
 
-        self._proxy_pool.add([server])
-        logger.success(f"[vps]: [{vps.vps_name}] replace proxy {server}")
+        if server:
+            # 防止tinyproxy失效
+            if self.check_ip(server):
+
+                self._proxy_pool.add([server])
+                logger.success(f"[vps]: [{vps.vps_name}] replace proxy {server}")
+
+            else:
+                self.restart_tinyproxy(vps)
+                logger.warning(f"[vps]: {vps.vps_name} server[{server}] can`t use")
+                raise Exception(f"[vps]: {vps.vps_name} server[{server}] can`t use")
 
         return server
 
@@ -148,6 +201,9 @@ if __name__ == '__main__':
 
     sche.run_interval_dial()
     # sche.run_time_dial()
+
+
+
 
 
     ...

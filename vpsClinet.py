@@ -62,7 +62,7 @@ class VpsClient(object):
         :return:
         """
 
-        ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd)
+        ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(cmd, timeout=20)
 
         out_str = ssh_stdout.read().decode()
         err_str = ssh_stderr.read().decode()
