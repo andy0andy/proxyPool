@@ -74,19 +74,21 @@ class Schedule(object):
         :return:
         """
 
+        try:
+            headers = {
+                "user_agent": fake.user_agent()
+            }
 
-        headers = {
-            "user_agent": fake.user_agent()
-        }
+            proxies = {
+                "http": f"http://{server}",
+                "https": f"http://{server}",
+            }
 
-        proxies = {
-            "http": f"http://{server}",
-            "https": f"http://{server}",
-        }
-
-        resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies, timeout=20)
-        if resp.status_code == 200:
-            return True
+            resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies, timeout=20)
+            if resp.status_code == 200:
+                return True
+        except Exception as e:
+            pass
 
         return False
 
@@ -101,7 +103,7 @@ class Schedule(object):
         server = ""
 
         # 超时断开,防止阻塞
-        with gevent.Timeout(20) as timeout:
+        with gevent.Timeout(20, False) as timeout:
             vps.open_ssh()
 
             old_server = vps.current_server
