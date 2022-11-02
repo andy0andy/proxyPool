@@ -84,7 +84,7 @@ class Schedule(object):
             "https": f"http://{server}",
         }
 
-        resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies)
+        resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies, timeout=20)
         if resp.status_code == 200:
             return True
 
