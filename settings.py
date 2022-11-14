@@ -33,12 +33,12 @@ dial_threshold = 100
 # vps池, 以ssh方式连接拨号
 vps_pool = [
     {
-        "host": "114.104.147.42",
-        "port": 20041,
-        "user": "root",
-        "password": "ZxHshan01",
-        "server_name": "hshan01",
-        "out_port": "8889"
+            "host": "114.104.147.42",
+            "port": 20041,
+            "user": "root",
+            "password": "ZxHshan01",
+            "server_name": "hshan01",
+            "out_port": "8889"
     },
     {
             "host": "114.104.147.16",

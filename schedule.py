@@ -45,9 +45,12 @@ class Schedule(object):
 
         self._vps_list = []
         for vps_data in vps_pool:
-            vps_cli = VpsClient(**vps_data)
-            # self.restart_tinyproxy(vps_cli)    # 重启tinyproxy
-            self._vps_list.append(vps_cli)
+            try:
+                vps_cli = VpsClient(**vps_data)
+                # self.restart_tinyproxy(vps_cli)    # 重启tinyproxy
+                self._vps_list.append(vps_cli)
+            except Exception as e:
+                logger.error(f"[vps]: {vps_data['server_name']} - {e}")
 
 
     def restart_tinyproxy(self, vps: VpsClient):
@@ -128,6 +131,8 @@ class Schedule(object):
                 self.restart_tinyproxy(vps)
                 logger.warning(f"[vps]: {vps.vps_name} server[{server}] can`t use")
                 raise Exception(f"[vps]: {vps.vps_name} server[{server}] can`t use")
+        else:
+            logger.warning(f"[vps]: {vps.vps_name} server get is empty")
 
         return server
 
