@@ -38,7 +38,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan01",
             "server_name": "hshan01",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -46,7 +48,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan02",
             "server_name": "hshan02",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -54,7 +58,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan03",
             "server_name": "hshan03",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -62,7 +68,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan04",
             "server_name": "hshan04",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -70,7 +78,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan05",
             "server_name": "hshan05",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -78,7 +88,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan06",
             "server_name": "hshan06",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -86,7 +98,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan07",
             "server_name": "hshan07",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -94,7 +108,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan08",
             "server_name": "hshan08",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -102,7 +118,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan09",
             "server_name": "hshan09",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
     {
             "host": "114.104.147.16",
@@ -110,7 +128,9 @@ vps_pool = [
             "user": "root",
             "password": "ZxHshan10",
             "server_name": "hshan10",
-            "out_port": "8889"
+            "out_port": "6256",
+            "auth_user": "zxkj",
+            "auth_pass": "Wlhrag11",
     },
 
 ]

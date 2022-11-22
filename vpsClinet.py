@@ -24,6 +24,8 @@ class VpsClient(object):
         self.vps_pass = kwargs.get("password")
         self.vps_out_port = kwargs.get("out_port")
         self.vps_name = kwargs.get("server_name")
+        self.auth_user = kwargs.get("auth_user")
+        self.auth_pass = kwargs.get("auth_pass")
 
         # 每次调用 get_ip方法，则记录当前ip
         self.current_server = ""
@@ -104,9 +106,14 @@ class VpsClient(object):
         ip = "".join(comp.findall(retval))
 
         if ip:
-            server = f"{ip}:{self.vps_out_port}"
+
+            if self.auth_user and self.auth_pass:
+                server = f"{self.auth_user}:{self.auth_pass}@{ip}:{self.vps_out_port}"
+            else:
+                server = f"{ip}:{self.vps_out_port}"
+
             self.current_server = server
-            # logger.info(f"[vps]: {self.vps_name} current [ip:port] -> {server}")
+
             return server
 
 
