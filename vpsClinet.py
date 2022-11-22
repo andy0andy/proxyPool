@@ -2,6 +2,7 @@ import random
 import paramiko
 from typing import Optional
 import re
+import time
 
 from settings import *
 
@@ -117,3 +118,19 @@ class VpsClient(object):
             return server
 
 
+# if __name__ == "__mian__":
+s = time.time()
+data = {
+    "host": "192.168.1.83",
+    "port": 22,
+    "user": "root",
+    "password": "123456zx",
+}
+vps = VpsClient(**data)
+
+vps.open_ssh()
+# ret = vps._exec_cmd("uname")
+# print(ret)
+vps.close_ssh()
+e = time.time()
+print(f"耗时: {int(e-s)}")

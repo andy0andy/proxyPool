@@ -84,7 +84,7 @@ class Schedule(object):
 
             proxies = {
                 "http": f"http://{server}",
-                "https": f"https://{server}",
+                "https": f"http://{server}",
             }
 
             resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies, timeout=10)

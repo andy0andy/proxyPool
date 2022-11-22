@@ -25,7 +25,7 @@ dial_start = "adsl-start"
 dial_stop = "adsl-stop"
 
 # 拨号间隔 s; 拨号一次大概10-12s之间
-dial_interval = 60
+dial_interval = 5
 
 # 拨号次数阈值
 dial_threshold = 100
@@ -33,8 +33,8 @@ dial_threshold = 100
 # vps池, 以ssh方式连接拨号
 vps_pool = [
     {
-            "host": "114.104.147.42",
-            "port": 20041,
+            "host": "114.104.147.16",
+            "port": 20189,
             "user": "root",
             "password": "ZxHshan01",
             "server_name": "hshan01",
