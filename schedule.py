@@ -9,7 +9,7 @@ import requests
 from retrying import retry
 
 from settings import *
-from vpsClinet import VpsClient
+from vpsClient import VpsClient
 from proxyPool import ProxyPool
 
 """
@@ -46,29 +46,33 @@ class Schedule(object):
 
         self._proxy_pool = ProxyPool()
 
-        self._vps_list = []
-        for vps_data in vps_pool:
+
+        def add_vps_list(vps_data):
             try:
                 vps_cli = VpsClient(**vps_data)
 
                 self._vps_list.append(vps_cli)
             except Exception as e:
-                logger.error(f"[vps]: {vps_data['server_name']} - {e}")
+                logger.error(f"[vps]: ({vps_data['name']} - {e}")
 
-    def restart_reverse_tool(self, vps: VpsClient):
+        self._vps_list = []
+        jobs = []
+        for vps_data in vps_pool:
+            job = gevent.spawn(add_vps_list, vps_data)
+            jobs.append(job)
+
+        gevent.joinall(jobs)
+
+    def restart_reverse_tool(self, vps_cli: VpsClient):
         """
-        重启 tinyproxy
+        重启 反向代理工具
         :param vps:
         :return:
         """
 
         with gevent.Timeout(10, False) as timeout:
-            vps.open_ssh()
-
             cmd = "systemctl restart squid"
-            vps._exec_cmd(cmd)
-
-            vps.close_ssh()
+            vps_cli.exec_cmd(cmd)
 
     def check_ip(self, server):
         """
@@ -87,7 +91,8 @@ class Schedule(object):
                 "https": f"http://{server}",
             }
 
-            resp = requests.get(random.choice(query_ip_urls), headers=headers, proxies=proxies, timeout=10)
+            url = random.choice(query_ip_urls)
+            resp = requests.get(url=url, headers=headers, proxies=proxies, timeout=10)
             if resp.status_code == 200:
                 return True
         except Exception as e:
@@ -96,7 +101,7 @@ class Schedule(object):
         return False
 
     @retry(stop_max_attempt_number=3)
-    def dial(self, vps: VpsClient) -> str:
+    def dial(self, vps_cli: VpsClient) -> str:
         """
         单次拨号, 并保存
         :param vps:
@@ -106,32 +111,34 @@ class Schedule(object):
 
         # 超时断开,防止阻塞
         with gevent.Timeout(20, False) as timeout:
-            vps.open_ssh()
 
-            old_server = vps.current_server
+            old_server = vps_cli.vps.current_server
             # 清除旧代理
             if self._proxy_pool.isExist(old_server):
                 self._proxy_pool.delete(old_server)
 
-            vps.adsl_stop()
-            vps.adsl_start()
-            server = vps.get_ip()
-
-            vps.close_ssh()
+            # 拨号
+            vps_cli.adsl_stop(dial_stop)
+            vps_cli.adsl_start(dial_start)
+            ip, server = vps_cli.get_current_ip()
 
         if server:
             # 防止反向代理工具失效
             if self.check_ip(server):
 
                 self._proxy_pool.add([server])
-                logger.success(f"[vps]: [{vps.vps_name}] replace proxy {server}")
+                logger.success(f"[vps]: [{vps_cli.vps.name}] replace proxy {server}")
 
             else:
-                self.restart_reverse_tool(vps)
-                logger.warning(f"[vps]: {vps.vps_name} server[{server}] can`t use")
-                raise Exception(f"[vps]: {vps.vps_name} server[{server}] can`t use")
+                self.restart_reverse_tool(vps_cli)
+
+                err_str = f"[vps]: {vps_cli.vps.name} server[{server}] can`t use"
+                logger.warning(err_str)
+                raise Exception(err_str)
         else:
-            logger.warning(f"[vps]: {vps.vps_name} server get is empty")
+            err_str = f"[vps]: {vps_cli.vps.name} server get is empty"
+            logger.warning(err_str)
+            raise Exception(err_str)
 
         return server
 
@@ -151,10 +158,10 @@ class Schedule(object):
             single_dial_vilume = len(self._vps_list) // batch
 
             for i in range(batch):
-                if i == batch-1:
-                    pend_vps_list = self._vps_list[i*single_dial_vilume:]
+                if i == batch - 1:
+                    pend_vps_list = self._vps_list[i * single_dial_vilume:]
                 else:
-                    pend_vps_list = self._vps_list[i*single_dial_vilume: (i+1)*single_dial_vilume]
+                    pend_vps_list = self._vps_list[i * single_dial_vilume: (i + 1) * single_dial_vilume]
 
                 # 协程拨号
                 jobs = []
@@ -183,17 +190,17 @@ class Schedule(object):
 
             if self._proxy_pool.count() == 0:
                 logger.info(f"[dial]: gt score threshold [{dial_threshold}] - {len(self._vps_list)}")
-                for vps in self._vps_list:
-                    job = gevent.spawn(self.dial, vps)
+                for vps_cli in self._vps_list:
+                    job = gevent.spawn(self.dial, vps_cli)
                     jobs.append(job)
 
             else:
                 servers = self._proxy_pool.gt_score_threshold()
                 logger.info(f"[dial]: gt score threshold [{dial_threshold}] - {len(servers)}")
                 for server in servers:
-                    for vps in self._vps_list:
-                        if vps.current_server == server:
-                            job = gevent.spawn(self.dial, vps)
+                    for vps_cli in self._vps_list:
+                        if vps_cli.vps.current_server == server:
+                            job = gevent.spawn(self.dial, vps_cli)
                             jobs.append(job)
 
             gevent.joinall(jobs)
@@ -205,6 +212,5 @@ if __name__ == '__main__':
 
     sche.run_interval_dial()
     # sche.run_time_dial()
-
 
     ...

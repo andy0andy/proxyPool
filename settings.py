@@ -2,7 +2,7 @@ import os
 from loguru import logger
 
 # 版本
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 # 项目根目录
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
@@ -37,7 +37,7 @@ vps_pool = [
             "port": 20189,
             "user": "root",
             "password": "ZxHshan01",
-            "server_name": "hshan01",
+            "name": "hshan01",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -47,7 +47,7 @@ vps_pool = [
             "port": 20093,
             "user": "root",
             "password": "ZxHshan02",
-            "server_name": "hshan02",
+            "name": "hshan02",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -57,7 +57,7 @@ vps_pool = [
             "port": 20101,
             "user": "root",
             "password": "ZxHshan03",
-            "server_name": "hshan03",
+            "name": "hshan03",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -67,7 +67,7 @@ vps_pool = [
             "port": 20107,
             "user": "root",
             "password": "ZxHshan04",
-            "server_name": "hshan04",
+            "name": "hshan04",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -77,7 +77,7 @@ vps_pool = [
             "port": 20227,
             "user": "root",
             "password": "ZxHshan05",
-            "server_name": "hshan05",
+            "name": "hshan05",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -87,7 +87,7 @@ vps_pool = [
             "port": 20229,
             "user": "root",
             "password": "ZxHshan06",
-            "server_name": "hshan06",
+            "name": "hshan06",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -97,7 +97,7 @@ vps_pool = [
             "port": 20231,
             "user": "root",
             "password": "ZxHshan07",
-            "server_name": "hshan07",
+            "name": "hshan07",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -107,7 +107,7 @@ vps_pool = [
             "port": 20241,
             "user": "root",
             "password": "ZxHshan08",
-            "server_name": "hshan08",
+            "name": "hshan08",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -117,7 +117,7 @@ vps_pool = [
             "port": 20243,
             "user": "root",
             "password": "ZxHshan09",
-            "server_name": "hshan09",
+            "name": "hshan09",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
@@ -127,7 +127,7 @@ vps_pool = [
             "port": 20245,
             "user": "root",
             "password": "ZxHshan10",
-            "server_name": "hshan10",
+            "name": "hshan10",
             "out_port": "6256",
             "auth_user": "zxkj",
             "auth_pass": "Wlhrag11",
