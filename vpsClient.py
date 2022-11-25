@@ -65,15 +65,20 @@ class VpsClient(object):
         self._channel = self._trans.open_session()  # 创建一个通道
         self._channel.get_pty()  # 获取终端
         self._channel.invoke_shell()  # 激活终端
+        logger.info(f"[vps]: ({self.vps.name}) 终端启动")
 
     def close_terminel(self):
         # 关闭终端
 
         if not self._channel.closed:
             self._channel.close()
+            self._channel = None
 
         if self._trans.is_alive():
             self._trans.close()
+            self._trans = None
+
+        logger.info(f"[vps]: ({self.vps.name}) 终端关闭")
 
     @retry
     def exec_cmd(self, cmd: Optional[str] = "\n", separator: Union[str, List[str]] = "~]#", max_line: int = 66,
