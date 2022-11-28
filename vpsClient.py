@@ -55,6 +55,7 @@ class VpsClient(object):
         # 获取当前ip，代理
         self.get_current_ip()
 
+    @retry
     def open_terminal(self):
         # ssh启动一个终端连接
 
@@ -66,6 +67,11 @@ class VpsClient(object):
         self._channel.get_pty()  # 获取终端
         self._channel.invoke_shell()  # 激活终端
         logger.info(f"[vps]: ({self.vps.name}) 终端启动")
+
+        if not self._trans.is_alive() or (not self._channel or self._channel.closed):
+            err_str = f"[vps]: ({self.vps.name}) 终端启动失败"
+            logger.warning(err_str)
+            raise Exception(err_str)
 
     def close_terminel(self):
         # 关闭终端
