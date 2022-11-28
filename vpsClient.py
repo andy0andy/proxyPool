@@ -60,10 +60,10 @@ class VpsClient(object):
         # ssh启动一个终端连接
 
         self._trans = paramiko.Transport((self.vps.host, self.vps.port))  # 建立一个socket
-        self._trans.start_client()  # 启动一个终端
+        self._trans.start_client(timeout=10)  # 启动一个终端
         self._trans.auth_password(username=self.vps.user, password=self.vps.password)  # 登录
 
-        self._channel = self._trans.open_session()  # 创建一个通道
+        self._channel = self._trans.open_session(timeout=10)  # 创建一个通道
         self._channel.get_pty()  # 获取终端
         self._channel.invoke_shell()  # 激活终端
         logger.info(f"[vps]: ({self.vps.name}) 终端启动")
@@ -205,6 +205,5 @@ if __name__ == '__main__':
         "auth_pass": "Wlhrag11",
     }
 
-    vps_cli = VpsClient(**data)
-
-    print(vps_cli.vps.current_ip, vps_cli.vps.current_server)
+    # vps_cli = VpsClient(**data)
+    # print(vps_cli.vps.current_ip, vps_cli.vps.current_server)
