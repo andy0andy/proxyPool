@@ -114,7 +114,7 @@ class Schedule(object):
 
             old_server = vps_cli.vps.current_server
             # 清除旧代理
-            if self._proxy_pool.isExist(old_server):
+            if old_server and self._proxy_pool.isExist(old_server):
                 self._proxy_pool.delete(old_server)
 
             # 拨号
@@ -210,7 +210,8 @@ class Schedule(object):
 if __name__ == '__main__':
     sche = Schedule()
 
+    # 测试偶然vps断开连接，重连阻塞时间过过长问题
     sche.run_interval_dial()
-    # sche.run_time_dial()
+
 
     ...

@@ -55,7 +55,8 @@ class VpsClient(object):
         # 获取当前ip，代理
         self.get_current_ip()
 
-    @retry
+
+    @retry(stop_max_attempt_number=3)
     def open_terminal(self):
         # ssh启动一个终端连接
 
@@ -86,7 +87,7 @@ class VpsClient(object):
 
         logger.info(f"[vps]: ({self.vps.name}) 终端关闭")
 
-    @retry
+    @retry(stop_max_attempt_number=3)
     def exec_cmd(self, cmd: Optional[str] = "\n", separator: Union[str, List[str]] = "~]#", max_line: int = 66,
                  nbytes: int = 10240):
         """
@@ -116,6 +117,7 @@ class VpsClient(object):
                 line = self._channel.recv(nbytes=nbytes).decode()
                 lines.append(line)
 
+                # 匹配结束符
                 if any([line.replace("\n", "").replace("\r", "").strip().endswith(sep) for sep in separator]):
                     break
 
@@ -205,5 +207,9 @@ if __name__ == '__main__':
         "auth_pass": "Wlhrag11",
     }
 
-    # vps_cli = VpsClient(**data)
-    # print(vps_cli.vps.current_ip, vps_cli.vps.current_server)
+    vps_cli = VpsClient(**data)
+
+    lines = vps_cli.exec_cmd(cmd="date")
+    print(f"{lines}")
+
+    vps_cli.close_terminel()
