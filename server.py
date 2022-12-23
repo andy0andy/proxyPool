@@ -63,7 +63,7 @@ def random(token: str = Depends(oauth2_scheme)) -> str:
 
 
 def runserver():
-    uvicorn.run(app, host="0.0.0.0", port=8081)
+    uvicorn.run(app, host="0.0.0.0", port=8081, access_log=False)
 
 if __name__ == '__main__':
     runserver()
