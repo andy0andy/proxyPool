@@ -54,27 +54,34 @@ class ProxyPool(object):
                     logger.warning(f"Add proxy fail.")
                     break
 
-    def query(self, size: int = -1) -> List[str]:
+    def query(self, size: Optional[int] = -1, use_times: Optional[int] = -1) -> List[str]:
         """
         查询代理，返回代理列表
         :param size: 返回个数；-1：代表返回所有
+        :param use_times: 权重，查找少于此权重的所有代理，-1：表示优先返回小权重代理
         :return:
         """
 
         proxy_list = []
 
-        if size >= 1:
-            size -= 1
-        else:
-            return proxy_list
+        if use_times == 0:
+            use_times = 0
+        elif use_times == -1:
+            use_times = "+inf"
 
-        servers = self._redis.zrange(self.pool_name, 0, size)
+        servers = self._redis.zrangebyscore(self.pool_name, 0, use_times)
+        if size == -1:
+            pass
+        else:
+            servers = servers[:size]
+
         for server in servers:
             server = server.decode()
             proxy_list.append(server)
             self._add_weight(server)
 
         return proxy_list
+
 
     def delete(self, server: Optional[str] = None, all: Optional[bool] = False):
         """
@@ -159,12 +166,13 @@ class ProxyPool(object):
 
 
 if __name__ == "__main__":
-    proxy_pool = ProxyPool()
+    # proxy_pool = ProxyPool(redis_host="192.168.153.128", redis_port=6379, redis_password="123456Jc", redis_db=15, pool_name="JcProxyPool")
 
     # proxy_pool.delete("114.104.134.198:8889")
 
     # proxy_pool.gt_score_threshold()
 
-    print(proxy_pool.count())
-    print(proxy_pool.gt_score_threshold())
+    # print(proxy_pool.count())
+    # print(proxy_pool.query(use_times=5))
+
     ...

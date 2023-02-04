@@ -43,7 +43,7 @@ def token(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @app.get("/proxies", description="获取代理接口")
-def proxies(size: Optional[int] = 1, token: str = Depends(oauth2_scheme)) -> Optional[List[str]]:
+def proxies(size: Optional[int] = 1, use_times: Optional[int] = -1, token: str = Depends(oauth2_scheme)) -> Optional[List[str]]:
     proxy_list = pool.query(size)
     return proxy_list
 

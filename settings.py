@@ -2,22 +2,22 @@ import os
 from loguru import logger
 
 # 版本
-VERSION = "0.1.2"
+VERSION = "0.1.3"
 
 # 项目根目录
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # redis
-REDIS_HOST = "192.168.1.83"
+REDIS_HOST = "127.0.0.1"
 REDIS_PORT = 6379
-REDIS_PASSWORD = "123456Zx"
+REDIS_PASSWORD = "123456"
 REDIS_DB = 15
 
 # 代理池名
-POOL_NAME = "ZxProxyPool"
+POOL_NAME = "ProxyPool"
 
 # web用户验证
-WEB_USERNAME = "zxkj"
+WEB_USERNAME = "root"
 WEB_PASSWORD = "123456"
 
 # 拨号命令
